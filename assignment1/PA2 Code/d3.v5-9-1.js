@@ -11338,10 +11338,10 @@ function tree() {
       });
       var s = left === right ? 1 : separation(left, right) / 2,
           tx = s - left.x,
-          kx = dx / (right.x + s + tx),
+          //kx = dx / (right.x + s + tx),
           ky = dy / (bottom.depth || 1);
       root.eachBefore(function(node) {
-        node.x = (node.x + tx) * kx;
+        node.x = (node.x + tx); //* kx;
         node.y = node.depth * ky;
       });
     }
