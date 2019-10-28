@@ -13,6 +13,7 @@ class BarChart {
     // D3 scales
     xAxisScale;
     yAxisScale;
+    colourScale;
 
     constructor(svgContainer)
     {
@@ -28,10 +29,11 @@ class BarChart {
     }
 
 
-    setupScales(xAxisScale, yAxisScale)
+    setupScales(xAxisScale, yAxisScale, colourScale)
     {
         this.xAxisScale = xAxisScale;
         this.yAxisScale = yAxisScale;
+        this.colourScale = colourScale;
     }
 
     /**
@@ -82,30 +84,98 @@ class BarChart {
      */
     createBars(xAxisSelector, yAxisSelector)
     {
-        // Use D3's selectAll function to create instances of SVG:rect virtually
-        // per item in our data array
-        this.datapoints = this.svgContainer.selectAll("rect")
-            .data(this.data)    // use the data we loaded from CSV
-            .enter()            // access the data item (e.g., this.data[0])
-            .append("rect")   // add the circle element into our SVG container
-            .attr("x", function(d){
+        var layer = this.svgContainer.selectAll(".stack")
+            .data(this.data)
+            .enter().append("g")
+            .attr("class", "stack")
+            .style("fill", function (d, i) {
+                return _vis.colourScale(i);
+            });
+
+        layer.selectAll("rect")
+            .data(function (d) {
+                return d;
+            })
+            .enter()
+            .append("rect")
+            .attr("x", function (d) {
                 // use the D3 scales we created earlier to map our data values to pixels on screen
                 return _vis.xAxisScale(d[xAxisSelector]);
             })
-            .attr("y", function(d){
-                return _vis.yAxisScale(d[yAxisSelector]);
+            .attr("y", function (d) {
+                return _vis.yAxisScale(d.y + d.y0);
+            })
+            .attr("height", function (d) {
+                return _vis.yAxisScale(d.y0) - _vis.yAxisScale(d.y + d.y0);
             })
             .attr("width", _vis.xAxisScale.bandwidth())
-            .attr("height", function (d) {
-                return _vis.height -  _vis.yAxisScale(d[yAxisSelector]) - MARGINS.bottom;
-            })
-            // change some styling
-            .style("fill", "coral")
-            .style("stroke", "white")
-            // add a text to show up on hover
             .append("svg:title")
             .text(function(d){
-                return d[yAxisSelector];
+                return d.y;
             });
+
+        // Use D3's selectAll function to create instances of SVG:rect virtually
+        // per item in our data array
+        // this.datapoints = this.svgContainer.selectAll("rect")
+        //     .data(this.data)    // use the data we loaded from CSV
+        //     .enter()            // access the data item (e.g., this.data[0])
+        //     .append("rect")   // add the circle element into our SVG container
+        //     .attr("x", function(d){
+        //         // use the D3 scales we created earlier to map our data values to pixels on screen
+        //         return _vis.xAxisScale(d[xAxisSelector]);
+        //     })
+        //     .attr("y", function(d){
+        //         return _vis.yAxisScale(d.y + d.y0);
+        //     })
+        //     .attr("width", _vis.xAxisScale.bandwidth())
+        //     .attr("height", function (d) {
+        //         return _vis.height -  _vis.yAxisScale(d[yAxisSelector]) - MARGINS.bottom;
+        //     })
+        //     // change some styling
+        //     .style("fill", "coral")
+        //     .style("stroke", "white")
+        //     // add a text to show up on hover
+        //     .append("svg:title")
+        //     .text(function(d){
+        //         return d[yAxisSelector];
+        //     });
+    }
+
+
+    createLegend(keys)
+    {
+        var legend = this.svgContainer.append('g')
+            .attr('class', 'legend')
+            .attr('transform', 'translate(' + (MARGINS.right + 12) + ', 0)');
+
+        // TODO: Need a Legend title
+
+        legend.selectAll('rect')
+            .data(keys)
+            .enter()
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', function(d, i){
+                return i * 18;
+            })
+            .attr('width', 12)
+            .attr('height', 12)
+            .attr('fill', function(d, i){
+                return _vis.colourScale(i);
+            });
+
+        legend.selectAll('text')
+            .data(keys)
+            .enter()
+            .append('text')
+            .text(function(d){
+                return d;
+            })
+            .attr('x', 18)
+            .attr('y', function(d, i){
+                return i * 18;
+            })
+            .attr('text-anchor', 'start')
+            .attr('alignment-baseline', 'hanging');
     }
 }

@@ -14,9 +14,7 @@ const MARGINS = {top: 10, right: 10, bottom: 60, left: 60};
 
 // Global variables
 var _vis;
-
-var temp;
-
+var _temp;
 
 /**
  * Function setup: sets up our visualization environment.
@@ -44,7 +42,6 @@ function loadData(dataPath)
             })
             .entries(subset);
 
-        var maxValue = 0;
         nestedSubset.forEach(function (arrayItem) {
             var rooms = d3.nest()
                .key(function (d) {return d.roomType})
@@ -59,23 +56,36 @@ function loadData(dataPath)
                 return d.value;
             });
 
-            if (totalDaysAvailable > maxValue)
-            {
-                maxValue = totalDaysAvailable;
-            }
-
             arrayItem.totalDaysAvailable = totalDaysAvailable;
+            rooms.forEach(function (item) {
+                arrayItem[item.key] = item.value;
+            });
             arrayItem.values = rooms;
         });
 
+        // TODO: Make the string array dynamic
+        var colourKeys = ["Entire home/apt", "Private room", "Shared room"];
+        var dataIntermediate = colourKeys.map(function(home){
+            return nestedSubset.map(function(d){
+                return {x: d['key'], y: (d[home] === undefined ? 0 : d[home]) };
+            })
+        });
+
+        nestedSubset = myStack(dataIntermediate);
+
         _vis.setData(nestedSubset);
+
+        console.log(nestedSubset);
 
         // Get neighbourhood names
         var neighbourhoods = [];
-        nestedSubset.forEach(function (arrayItem) {
-            var item = arrayItem.key;
+        nestedSubset[0].forEach(function (arrayItem) {
+            var item = arrayItem.x;
             neighbourhoods.push(item);
         });
+
+        // Get maxValue
+        var maxValue = d3.max(nestedSubset[nestedSubset.length - 1], function(d) { return d.y0 + d.y; });
 
         var xScale = d3.scaleBand()
             .range([MARGINS.left, _vis.width - MARGINS.left])
@@ -87,8 +97,29 @@ function loadData(dataPath)
             .range([_vis.height - MARGINS.bottom, MARGINS.top])
             .domain([0, maxValue]);
 
-        _vis.setupScales(xScale, yScale);
+        var colourScale = d3.scaleOrdinal(d3.schemeAccent);
+
+        _vis.setupScales(xScale, yScale, colourScale);
         _vis.setupAxes("Neighbourhood Group", "Available Days");
-        _vis.createBars("key", "totalDaysAvailable");
+        _vis.createBars("x", "totalDaysAvailable");
+        _vis.createLegend(colourKeys)
     });
+}
+
+/**
+ * My hack solution for d3.stack()
+ * @param array
+ */
+function myStack(array) {
+    array[0].forEach(function (arrayElement) {
+        arrayElement.y0 = 0;
+    });
+    for (var i = 1; i < array.length; i++)
+    {
+        for (var j = 0; j < array[i].length; j++)
+        {
+            array[i][j].y0 = array[i - 1][j].y0 + array[i - 1][j].y;
+        }
+    }
+    return array;
 }
