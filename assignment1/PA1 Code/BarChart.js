@@ -4,7 +4,6 @@ class BarChart {
     height;
 
     svgContainer;  // the SVG element where we will be drawing our vis
-    datapoints;    // SVG elements per data point
 
     // D3 axes
     xAxis;
@@ -44,10 +43,7 @@ class BarChart {
     setupAxes(xLabel, yLabel)
     {
         // call d3's axisBottom for the x-axis
-        this.xAxis = d3.axisBottom(this.xAxisScale)
-            .tickSize(-this.height + MARGINS.bottom + MARGINS.top)
-            .ticks(10)
-            .tickPadding(10);
+        this.xAxis = d3.axisBottom(this.xAxisScale);
         // call d3's axisLeft for the y-axis
         this.yAxis = d3.axisLeft(this.yAxisScale)
             .tickSize(-this.width + MARGINS.left*2)
@@ -71,7 +67,7 @@ class BarChart {
             .text(yLabel);
         this.svgContainer.append("text")
             .attr("x", (this.width)/2)
-            .attr("y", (this.height - MARGINS.top))
+            .attr("y", (MARGINS.top))
             .style("text-anchor", "middle")
             .text(xLabel);
 
@@ -113,38 +109,12 @@ class BarChart {
             .text(function(d){
                 return d.y;
             });
-
-        // Use D3's selectAll function to create instances of SVG:rect virtually
-        // per item in our data array
-        // this.datapoints = this.svgContainer.selectAll("rect")
-        //     .data(this.data)    // use the data we loaded from CSV
-        //     .enter()            // access the data item (e.g., this.data[0])
-        //     .append("rect")   // add the circle element into our SVG container
-        //     .attr("x", function(d){
-        //         // use the D3 scales we created earlier to map our data values to pixels on screen
-        //         return _vis.xAxisScale(d[xAxisSelector]);
-        //     })
-        //     .attr("y", function(d){
-        //         return _vis.yAxisScale(d.y + d.y0);
-        //     })
-        //     .attr("width", _vis.xAxisScale.bandwidth())
-        //     .attr("height", function (d) {
-        //         return _vis.height -  _vis.yAxisScale(d[yAxisSelector]) - MARGINS.bottom;
-        //     })
-        //     // change some styling
-        //     .style("fill", "coral")
-        //     .style("stroke", "white")
-        //     // add a text to show up on hover
-        //     .append("svg:title")
-        //     .text(function(d){
-        //         return d[yAxisSelector];
-        //     });
     }
 
 
-    createLegend(keys)
+    createLegend(keys, svgContainer)
     {
-        var legend = this.svgContainer.append('g')
+        var legend = svgContainer.append('g')
             .attr('class', 'legend')
             .attr('transform', 'translate(' + (MARGINS.right + 12) + ', 0)');
 

@@ -10,11 +10,11 @@ window.onload = function(){
  * object to keep track of our magic numbers for margins
  * @type {{top: number, left: number, bottom: number, right: number}}
  */
-const MARGINS = {top: 10, right: 10, bottom: 60, left: 60};
+const MARGINS = {top: 50, right: 10, bottom: 60, left: 100};
 
 // Global variables
 var _vis;
-var _temp;
+var _legend;
 
 /**
  * Function setup: sets up our visualization environment.
@@ -22,6 +22,7 @@ var _temp;
  */
 function setup(){
     _vis = new BarChart(d3.select("#vis"));
+    _legend = d3.select("#legend");
     loadData("AB_NYC_2019_Subset_2.csv");
 }
 
@@ -102,7 +103,7 @@ function loadData(dataPath)
         _vis.setupScales(xScale, yScale, colourScale);
         _vis.setupAxes("Neighbourhood Group", "Available Days");
         _vis.createBars("x", "totalDaysAvailable");
-        _vis.createLegend(colourKeys)
+        _vis.createLegend(colourKeys, _legend)
     });
 }
 
