@@ -10,7 +10,7 @@ window.onload = function(){
  * object to keep track of our magic numbers for margins
  * @type {{top: number, left: number, bottom: number, right: number}}
  */
-const MARGINS = {top: 50, right: 10, bottom: 60, left: 100};
+const MARGINS = {top: 100, right: 10, bottom: 60, left: 150};
 
 // Global variables
 var _vis;
@@ -101,7 +101,7 @@ function loadData(dataPath)
         var colourScale = d3.scaleOrdinal(d3.schemeAccent);
 
         _vis.setupScales(xScale, yScale, colourScale);
-        _vis.setupAxes("Neighbourhood Group", "Available Days");
+        _vis.setupAxes("Neighbourhood Group", "Available Days in a Year");
         _vis.createBars("x", "totalDaysAvailable");
         _vis.createLegend(colourKeys, _legend)
     });

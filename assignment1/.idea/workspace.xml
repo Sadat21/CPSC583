@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f567887b-96b2-4081-bfd7-5d2bbfe1e3e9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PA1 Code/BarChart.js" beforeDir="false" afterPath="$PROJECT_DIR$/PA1 Code/BarChart.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PA1 Code/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/PA1 Code/index.html" afterDir="false" />
@@ -78,6 +77,7 @@
       <workItem from="1571502946321" duration="1316000" />
       <workItem from="1571597598410" duration="5927000" />
       <workItem from="1572191454086" duration="20968000" />
+      <workItem from="1572285635868" duration="5580000" />
     </task>
     <servers />
   </component>

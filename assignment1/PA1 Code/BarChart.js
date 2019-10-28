@@ -43,32 +43,38 @@ class BarChart {
     setupAxes(xLabel, yLabel)
     {
         // call d3's axisBottom for the x-axis
-        this.xAxis = d3.axisBottom(this.xAxisScale);
+        this.xAxis = d3.axisBottom(this.xAxisScale)
+            .tickSizeOuter(0);
         // call d3's axisLeft for the y-axis
         this.yAxis = d3.axisLeft(this.yAxisScale)
             .tickSize(-this.width + MARGINS.left*2)
+            .tickSizeOuter(0)
             .ticks(10)
             .tickPadding(10);
 
         // call our axes inside "group" (<g></g>) objects inside our SVG container
         this.svgContainer.append("g")
             .attr("transform", `translate(0, ${this.height - MARGINS.bottom })`)
+            .style("stroke-width", .1)
             .call(this.xAxis);
         this.svgContainer.append("g")
             .attr("transform", `translate(${MARGINS.left}, 0)`)
+            .style("stroke-width", .1)
             .call(this.yAxis);
 
         // add text labels
         this.svgContainer.append("text")
-            .attr("x", MARGINS.left)
+            .attr("x", MARGINS.left/2)
             .attr("y", (this.height)/2)
             .attr("transform", `rotate(-90, ${MARGINS.left / 2}, ${this.height/2})`)
             .style("text-anchor", "middle")
+            .style("font-weight", "bold")
             .text(yLabel);
         this.svgContainer.append("text")
             .attr("x", (this.width)/2)
-            .attr("y", (MARGINS.top))
+            .attr("y", (MARGINS.top/2))
             .style("text-anchor", "middle")
+            .style("font-weight", "bold")
             .text(xLabel);
 
     }
@@ -114,11 +120,17 @@ class BarChart {
 
     createLegend(keys, svgContainer)
     {
+        // TODO: Need a Legend title
+        svgContainer.append("text")
+            .attr("x", 70)
+            .attr("y", 50)
+            .style("text-anchor", "middle")
+            .style("font-weight", "bold")
+            .text("Types of Rooms");
+
         var legend = svgContainer.append('g')
             .attr('class', 'legend')
-            .attr('transform', 'translate(' + (MARGINS.right + 12) + ', 0)');
-
-        // TODO: Need a Legend title
+            .attr('transform', 'translate(' + (MARGINS.right) + ','+ (MARGINS.top/2 ) + ')');
 
         legend.selectAll('rect')
             .data(keys)
@@ -126,10 +138,10 @@ class BarChart {
             .append('rect')
             .attr('x', 0)
             .attr('y', function(d, i){
-                return i * 18;
+                return (i + 1) * 30;
             })
-            .attr('width', 12)
-            .attr('height', 12)
+            .attr('width', 20)
+            .attr('height', 20)
             .attr('fill', function(d, i){
                 return _vis.colourScale(i);
             });
@@ -141,9 +153,9 @@ class BarChart {
             .text(function(d){
                 return d;
             })
-            .attr('x', 18)
+            .attr('x', 40)
             .attr('y', function(d, i){
-                return i * 18;
+                return (i + 1) * 30;
             })
             .attr('text-anchor', 'start')
             .attr('alignment-baseline', 'hanging');
