@@ -31,7 +31,6 @@ class BarChart {
     setupScales(xAxisScale, yAxisScale)
     {
         this.xAxisScale = xAxisScale;
-
         this.yAxisScale = yAxisScale;
     }
 
@@ -65,7 +64,7 @@ class BarChart {
         this.svgContainer.append("text")
             .attr("x", MARGINS.left)
             .attr("y", (this.height)/2)
-            .attr("transform", `rotate(-90, ${MARGINS.left / 3}, ${this.height/2})`)
+            .attr("transform", `rotate(-90, ${MARGINS.left / 2}, ${this.height/2})`)
             .style("text-anchor", "middle")
             .text(yLabel);
         this.svgContainer.append("text")
@@ -83,7 +82,7 @@ class BarChart {
      */
     createBars(xAxisSelector, yAxisSelector)
     {
-        // Use D3's selectAll function to create instances of SVG:circle virtually
+        // Use D3's selectAll function to create instances of SVG:rect virtually
         // per item in our data array
         this.datapoints = this.svgContainer.selectAll("rect")
             .data(this.data)    // use the data we loaded from CSV

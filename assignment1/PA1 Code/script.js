@@ -15,6 +15,8 @@ const MARGINS = {top: 10, right: 10, bottom: 60, left: 60};
 // Global variables
 var _vis;
 
+var temp;
+
 
 /**
  * Function setup: sets up our visualization environment.
@@ -29,24 +31,62 @@ function loadData(dataPath)
 {
     // call D3's loading function for CSV and load the data to our global variable _data
     d3.csv(dataPath).then(function(data){
-        _vis.setData(data.map(function (d) {
+        var subset = data.map(function (d) {
             return {
                 daysAvailable: d.availability_365,
                 neighbourhoodGroup: d.neighbourhood_group,
                 roomType: d.room_type
+            }});
+
+        var nestedSubset = d3.nest()
+            .key(function (d) {
+            return d.neighbourhoodGroup;
+            })
+            .entries(subset);
+
+        var maxValue = 0;
+        nestedSubset.forEach(function (arrayItem) {
+            var rooms = d3.nest()
+               .key(function (d) {return d.roomType})
+                .rollup(function (v) {
+                    return d3.sum(v, function (d) {
+                        return d.daysAvailable;
+                    })
+                })
+               .entries(arrayItem.values);
+
+            const totalDaysAvailable = d3.sum(rooms, function (d) {
+                return d.value;
+            });
+
+            if (totalDaysAvailable > maxValue)
+            {
+                maxValue = totalDaysAvailable;
             }
-        }));
+
+            arrayItem.totalDaysAvailable = totalDaysAvailable;
+            arrayItem.values = rooms;
+        });
+
+        _vis.setData(nestedSubset);
+
+        // Get neighbourhood names
+        var neighbourhoods = [];
+        nestedSubset.forEach(function (arrayItem) {
+            var item = arrayItem.key;
+            neighbourhoods.push(item);
+        });
 
         var xScale = d3.scaleBand()
             .range([MARGINS.left, _vis.width - MARGINS.left])
-            .domain(["Manhattan", "Queens", "Bronx", "Brooklyn"]);
+            .domain(neighbourhoods);
 
         var yScale = d3.scaleLinear()
             .range([_vis.height - MARGINS.bottom, MARGINS.top])
-            .domain([40, 100]);
+            .domain([0, maxValue]);
 
         _vis.setupScales(xScale, yScale);
-        _vis.setupAxes("Neighbourhood", "Available Days");
-        _vis.createBars("neighbourhoodGroup", "daysAvailable");
+        _vis.setupAxes("Neighbourhood Group", "Available Days");
+        _vis.createBars("neighbourhoodGroup", "totalDaysAvailable");
     });
 }
