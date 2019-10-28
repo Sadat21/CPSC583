@@ -88,14 +88,16 @@ class BarChart {
             .data(this.data)    // use the data we loaded from CSV
             .enter()            // access the data item (e.g., this.data[0])
             .append("rect")   // add the circle element into our SVG container
-            .attr("r", 8)       // change some of the attributes of our circles
-            // function(d){ return d; } -> allows us to access the data we entered
-            .attr("cx", function(d){
+            .attr("x", function(d){
                 // use the D3 scales we created earlier to map our data values to pixels on screen
                 return _vis.xAxisScale(d[xAxisSelector]);
             })
-            .attr("cy", function(d){
+            .attr("y", function(d){
                 return _vis.yAxisScale(d[yAxisSelector]);
+            })
+            .attr("width", _vis.xAxisScale.bandwidth())
+            .attr("height", function (d) {
+                return _vis.height -  _vis.yAxisScale(d[yAxisSelector]) - MARGINS.bottom;
             })
             // change some styling
             .style("fill", "coral")
@@ -103,7 +105,7 @@ class BarChart {
             // add a text to show up on hover
             .append("svg:title")
             .text(function(d){
-                return d.Country;
+                return d[yAxisSelector];
             });
     }
 }

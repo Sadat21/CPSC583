@@ -79,7 +79,9 @@ function loadData(dataPath)
 
         var xScale = d3.scaleBand()
             .range([MARGINS.left, _vis.width - MARGINS.left])
-            .domain(neighbourhoods);
+            .domain(neighbourhoods)
+            // TODO: Make this dynamic
+            .padding(0.5);
 
         var yScale = d3.scaleLinear()
             .range([_vis.height - MARGINS.bottom, MARGINS.top])
@@ -87,6 +89,6 @@ function loadData(dataPath)
 
         _vis.setupScales(xScale, yScale);
         _vis.setupAxes("Neighbourhood Group", "Available Days");
-        _vis.createBars("neighbourhoodGroup", "totalDaysAvailable");
+        _vis.createBars("key", "totalDaysAvailable");
     });
 }
