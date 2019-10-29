@@ -1,3 +1,7 @@
+/*
+CSS template used from CPSC 583 tutorials. Credit Coskun Sahin
+*/
+
 /* importing fonts from Google Font API */
 @import url('https://fonts.googleapis.com/css?family=Major+Mono+Display');
 @import url('https://fonts.googleapis.com/css?family=Sarabun:300,300i,400,700');
@@ -37,8 +41,9 @@ h2 {
     text-transform: lowercase;
 }
 
+/* Styles the div encapsulating the sbg elements */
 div#div_visuals {
-    background: beige;
+    background: whitesmoke;
     background-clip: content-box;
     width: 100%;
     height: 100%;
@@ -46,7 +51,7 @@ div#div_visuals {
     box-sizing: border-box;
 }
 
-/* styling elements through their class */
+/* Styles the svg bar chart */
 .svg_chart {
     background: whitesmoke;
     display: block;
@@ -57,7 +62,7 @@ div#div_visuals {
     box-sizing: border-box;
     margin: auto;
 }
-
+/* Styles the svg legend */
 .svg_legend {
     background: whitesmoke;
     display: block;
@@ -67,18 +72,4 @@ div#div_visuals {
     min-width: 100px;
     box-sizing: border-box;
     margin: auto;
-}
-
-.container {
-    height: 200px;
-    position: relative;
-    border: 3px solid green;
-}
-
-.vertical-center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
 }

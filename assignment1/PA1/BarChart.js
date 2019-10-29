@@ -1,9 +1,19 @@
+/**
+ * Class that creates the bar chart and legend for the bar chart
+ *
+ * Some useful links used:
+ *  * D3 Documentation: https://github.com/d3/d3/wiki
+ *  * Coskun Sahin's CPSC 583 Tutorial Slides
+ */
 class BarChart {
-    data;          // contains our dataset
+    // SVG element fields
+    svgContainer;
     width;
     height;
 
-    svgContainer;  // the SVG element where we will be drawing our vis
+    // Data used for bar chart
+    data;
+
 
     // D3 axes
     xAxis;
@@ -14,6 +24,10 @@ class BarChart {
     yAxisScale;
     colourScale;
 
+    /**
+     * Sets up the svg element local fields
+     * @param svgContainer svg element to create the chart for
+     */
     constructor(svgContainer)
     {
         this.svgContainer = svgContainer;
@@ -22,12 +36,21 @@ class BarChart {
         this.height = svgContainer.node().getBoundingClientRect().height;
     }
 
+    /**
+     * Sets the data object
+     * @param data
+     */
     setData(data)
     {
         this.data = data;
     }
 
-
+    /**
+     * Initializes the d3 scales
+     * @param xAxisScale x-axis scale
+     * @param yAxisScale y-axis scale
+     * @param colourScale colour scale used to differentiate within the bars
+     */
     setupScales(xAxisScale, yAxisScale, colourScale)
     {
         this.xAxisScale = xAxisScale;
@@ -36,7 +59,7 @@ class BarChart {
     }
 
     /**
-     * Function setupAxes initializes D3 axes for our Scatterplot
+     * Initializes D3 axes for our Bar Chart
      * @param xLabel the label of the x-axis
      * @param yLabel the label of the y-axis
      */
@@ -52,7 +75,7 @@ class BarChart {
             .ticks(10)
             .tickPadding(10);
 
-        // call our axes inside "group" (<g></g>) objects inside our SVG container
+        // Create the axes for the bar chart
         this.svgContainer.append("g")
             .attr("transform", `translate(0, ${this.height - MARGINS.bottom })`)
             .style("stroke-width", .1)
@@ -62,7 +85,7 @@ class BarChart {
             .style("stroke-width", .1)
             .call(this.yAxis);
 
-        // add text labels
+        // add text labels to the x and y axes
         this.svgContainer.append("text")
             .attr("x", MARGINS.left/2)
             .attr("y", (this.height)/2)
@@ -76,17 +99,18 @@ class BarChart {
             .style("text-anchor", "middle")
             .style("font-weight", "bold")
             .text(xLabel);
-
     }
 
     /**
-     * Function createCircles initializes the datapoints in our scatterplot
-     * @param xAxisSelector the data property for values to appear in x-axis
-     * @param yAxisSelector the data property for values to appear in y-axis
+     * Function creates the bars for the chart
+     * @param xAxisSelector the key used to parse the x-axis values
+     *
+     * Used ideas from: https://bl.ocks.org/mtandre/bea54a387eb5506ad5d46cb5e74d9bce
      */
-    createBars(xAxisSelector, yAxisSelector)
+    createBars(xAxisSelector)
     {
-        var layer = this.svgContainer.selectAll(".stack")
+        // Create top level <g></g> group
+        var stackChart = this.svgContainer.selectAll(".stack")
             .data(this.data)
             .enter().append("g")
             .attr("class", "stack")
@@ -94,14 +118,14 @@ class BarChart {
                 return _vis.colourScale(i);
             });
 
-        layer.selectAll("rect")
+        // Draw the stacked bars
+        stackChart.selectAll("rect")
             .data(function (d) {
                 return d;
             })
             .enter()
             .append("rect")
             .attr("x", function (d) {
-                // use the D3 scales we created earlier to map our data values to pixels on screen
                 return _vis.xAxisScale(d[xAxisSelector]);
             })
             .attr("y", function (d) {
@@ -117,10 +141,14 @@ class BarChart {
             });
     }
 
-
+    /**
+     * Creates the legend for the bar chart
+     * @param keys Names of the colours differentiating the bars
+     * @param svgContainer svg element where the legend will be drawn
+     */
     createLegend(keys, svgContainer)
     {
-        // TODO: Need a Legend title
+        // Creates legend title
         svgContainer.append("text")
             .attr("x", 70)
             .attr("y", 50)
@@ -128,10 +156,12 @@ class BarChart {
             .style("font-weight", "bold")
             .text("Types of Rooms");
 
+        // Create top level <g></g>
         var legend = svgContainer.append('g')
             .attr('class', 'legend')
             .attr('transform', 'translate(' + (MARGINS.right) + ','+ (MARGINS.top/2 ) + ')');
 
+        // Create the different colours fpr the legend
         legend.selectAll('rect')
             .data(keys)
             .enter()
@@ -146,6 +176,7 @@ class BarChart {
                 return _vis.colourScale(i);
             });
 
+        // Create the text labels for the different colours
         legend.selectAll('text')
             .data(keys)
             .enter()
