@@ -17,11 +17,24 @@
         stroke: black;
         shape-rendering: crispEdges;
     }
+
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        width: 100px;
+        height: 100px;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
 </style>
 <body>
-<script src="http://d3js.org/d3.v4.min.js"></script>
-<script src="http://d3js.org/queue.v1.min.js"></script>
-<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="lib/http_d3js.org_d3.v4.js"></script>
+<script src="lib/http_d3js.org_queue.v1.js"></script>
+<script src="lib/http_d3js.org_topojson.v1.js"></script>
 <script>
     /**
      * copied from the following resources:
@@ -68,6 +81,10 @@
 
     function ready(error, data, population, who) {
         const fertilityById = {};
+        const maleLifeExpectencyById = {};
+        const femaleLifeExpectencyById = {};
+
+
 
         population.forEach(d => {
             var res = who.find(e => {
@@ -85,6 +102,13 @@
             d.population = fertilityById[d.id]
         });
 
+        who.forEach(d => {
+            maleLifeExpectencyById[d.id] = +d['Life expectancy at birth (years) male'];
+        });
+        who.forEach(d => {
+            femaleLifeExpectencyById[d.id] = +d['Life expectancy at birth (years) female'];
+        });
+
         svg.append('g')
             .attr('class', 'countries')
             .selectAll('path')
@@ -98,9 +122,21 @@
             .style('stroke', 'white')
             .style('opacity', 0.8)
             .style('stroke-width', 0.3)
-            .on('mouseover', function (d) {
+            // Hover tip code used from http://bl.ocks.org/d3noob/a22c42db65eb00d4e369
+            .on("mouseover", function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html(d.properties.name
+                    + "<br/> Male life expectancy (years): " + maleLifeExpectencyById[d.id]
+                    + "<br/> Female life expectancy (years): " + femaleLifeExpectencyById[d.id] )
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
             })
-            .on('mouseout', function (d) {
+            .on("mouseout", function (d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
             });
 
         svg.append('path')
@@ -156,6 +192,13 @@
             .style("text-anchor", "end")
             .text("Protein (g)");
 
+
+        // Define the div for the tooltip
+        // Got code from http://bl.ocks.org/d3noob/a22c42db65eb00d4e369
+        var div = d3.select("body").append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
         // draw dots
         scatterplot.selectAll(".dot")
             .data(who)
@@ -169,9 +212,21 @@
             .style("fill", function (d) {
                 return color(fertilityById[d.id]);
             })
+            // Hover tip code used from http://bl.ocks.org/d3noob/a22c42db65eb00d4e369
             .on("mouseover", function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html(d.Country
+                    + "<br/> Male life expectancy (years): " + maleLifeExpectencyById[d.id]
+                    + "<br/> Female life expectancy (years): " + femaleLifeExpectencyById[d.id] )
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
             })
             .on("mouseout", function (d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
             });
 
         // draw legend
@@ -199,7 +254,7 @@
             .text(function (d) {
                 return d;
             })
-    };
+    }
 
 </script>
 </body>
