@@ -138,6 +138,29 @@
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
+            })
+            .on("click", function (element) {
+                // Reset to default colours
+                scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
+                svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
+
+
+                // Highlight Map
+                const map = d3.select(this).style("fill", "red");
+                console.log(element.properties.name);
+
+
+                //Highlight Dot
+                const dotSvg = svg.select(".COUNTRY-" + element.properties.name);
+                console.log(dotSvg);
+                if (dotSvg)
+                {
+                    dotSvg.style("fill", "red");
+                }
+                else
+                {
+                    console.log("Dot does not exist for " + element.properties.name);
+                }
             });
 
         svg.append('path')
@@ -244,11 +267,10 @@
                 {
                     const featureId = feature[0].id;
                     const map = svg.select("#" + featureId).style("fill", "red");
-
                 }
                 else
                 {
-                    console.log("Feature does not exist.")
+                    console.log("Map object does not exist for dot" + element.Country)
                 }
             });
 
