@@ -144,15 +144,14 @@
                 scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
                 svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
 
+                console.log("Selected " + element.properties.name + " on the world map");
 
                 // Highlight Map
                 const map = d3.select(this).style("fill", "red");
-                console.log(element.properties.name);
 
 
                 //Highlight Dot
                 const dotSvg = svg.select(".COUNTRY-" + element.properties.name);
-                console.log(dotSvg);
                 if (dotSvg)
                 {
                     dotSvg.style("fill", "red");
@@ -256,6 +255,8 @@
                 // Reset to default colours
                 scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
                 svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
+
+                console.log("Selected " + element.Country + " on the scatter plot");
 
 
                 // Highlight dot
