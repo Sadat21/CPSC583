@@ -115,7 +115,7 @@
             .data(data.features)
             .enter().append('path')
             .attr("class", d => {
-                return "COUNTRY-CODE-" + d.id;
+                return "country-map-svg COUNTRY-CODE-" + d.id;
             })
             .attr("id", d => d.id)
             .attr('d', path)
@@ -230,15 +230,21 @@
                     .style("opacity", 0);
             })
             .on("click", function (element) {
+                // Reset to default colours
+                scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
+                svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
+
+
                 // Highlight dot
-                d3.select(this).style("fill", "yellow");
-                
+                const circle = d3.select(this).style("fill", "red");
+
                 // Highlight Map
                 var feature = data.features.filter(e => e.properties.name === element.Country);
                 if (feature.length > 0)
                 {
                     const featureId = feature[0].id;
-                    svg.select("#" + featureId).style("fill", "yellow");
+                    const map = svg.select("#" + featureId).style("fill", "red");
+
                 }
                 else
                 {
