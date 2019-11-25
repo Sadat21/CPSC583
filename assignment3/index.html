@@ -117,6 +117,7 @@
             .attr("class", d => {
                 return "COUNTRY-CODE-" + d.id;
             })
+            .attr("id", d => d.id)
             .attr('d', path)
             .style('fill', d => color(fertilityById[d.id]))
             .style('stroke', 'white')
@@ -227,6 +228,22 @@
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
+            })
+            .on("click", function (element) {
+                // Highlight dot
+                d3.select(this).style("fill", "yellow");
+                
+                // Highlight Map
+                var feature = data.features.filter(e => e.properties.name === element.Country);
+                if (feature.length > 0)
+                {
+                    const featureId = feature[0].id;
+                    svg.select("#" + featureId).style("fill", "yellow");
+                }
+                else
+                {
+                    console.log("Feature does not exist.")
+                }
             });
 
         // draw legend
