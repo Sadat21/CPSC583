@@ -140,25 +140,33 @@
                     .style("opacity", 0);
             })
             .on("click", function (element) {
-                // Reset to default colours
-                scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
-                svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
-
-                console.log("Selected " + element.properties.name + " on the world map");
-
-                // Highlight Map
-                const map = d3.select(this).style("fill", "red");
-
-
-                //Highlight Dot
+                const map = d3.select(this);
                 const dotSvg = svg.select(".COUNTRY-" + element.properties.name);
-                if (dotSvg)
+
+                if (map._groups[0][0].style.fill !== "red")
                 {
-                    dotSvg.style("fill", "red");
+                    console.log("Select " + element.properties.name + " on the world map");
+
+                    // Highlight Map
+                    map.style("fill", "red");
+
+                    //Highlight Dot if it exists
+                    if (dotSvg)
+                    {
+                        dotSvg.style("fill", "red");
+                    }
+                    else
+                    {
+                        console.log("Dot does not exist for " + element.properties.name);
+                    }
                 }
                 else
                 {
-                    console.log("Dot does not exist for " + element.properties.name);
+                    console.log("Deselect " + element.properties.name + " on the world map");
+
+                    // Change back to default colours
+                    map.style("fill", d => color(fertilityById[d.id]));
+                    dotSvg.style("fill", d => color(fertilityById[d.id]));
                 }
             });
 
@@ -252,27 +260,38 @@
                     .style("opacity", 0);
             })
             .on("click", function (element) {
-                // Reset to default colours
-                scatterplot.selectAll(".dot").style("fill", d => color(fertilityById[d.id]));
-                svg.selectAll(".country-map-svg").style("fill", d => color(fertilityById[d.id]));
+                const circle = d3.select(this);
 
-                console.log("Selected " + element.Country + " on the scatter plot");
+                const feature = data.features.filter(e => e.properties.name === element.Country);
+                const featureId = feature[0].id;
+                const map = svg.select("#" + featureId)
 
+                if (circle._groups[0][0].style.fill !== 'red') {
+                    // Highlight dot
+                    console.log("Select " + element.Country + " on the scatter plot");
+                    circle.style("fill", "red");
 
-                // Highlight dot
-                const circle = d3.select(this).style("fill", "red");
-
-                // Highlight Map
-                var feature = data.features.filter(e => e.properties.name === element.Country);
-                if (feature.length > 0)
-                {
-                    const featureId = feature[0].id;
-                    const map = svg.select("#" + featureId).style("fill", "red");
+                    // Highlight Map if it exists
+                    if (feature.length > 0)
+                    {
+                        map.style("fill", "red");
+                    }
+                    else
+                    {
+                        console.log("Map object does not exist for dot" + element.Country)
+                    }
                 }
                 else
                 {
-                    console.log("Map object does not exist for dot" + element.Country)
+                    console.log("Deselect " + element.Country + " on the scatter plot");
+                    // Colour back to default
+                    circle.style("fill", d => color(fertilityById[d.id]));
+
+                    // Colour map back to default
+                    map.style("fill", d => color(fertilityById[d.id]));
                 }
+
+
             });
 
         // draw legend
