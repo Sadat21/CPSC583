@@ -141,7 +141,7 @@
             })
             .on("click", function (element) {
                 const map = d3.select(this);
-                const dotSvg = svg.select(".COUNTRY-" + element.properties.name);
+                const dotSvg = scatterplot.select(".COUNTRY-" + element.properties.name);
 
                 if (map._groups[0][0].style.fill !== "red")
                 {
